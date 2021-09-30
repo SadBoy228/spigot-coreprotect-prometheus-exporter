@@ -1,4 +1,4 @@
-module spigot-coreprotect-prometheus-exporter
+module github.com/SadBoy228/spigot-coreprotect-prometheus-exporter
 
 go 1.15
 
