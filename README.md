@@ -1,7 +1,14 @@
 # Spigot CoreProtect Prometheus Exporter
-[![License](https://img.shields.io/github/license/SadBoy228/spigot-coreprotect-prometheus-exporter?&logo=github)](LICENSE)
+[![License](https://img.shields.io/github/license/k0tletka/spigot-coreprotect-prometheus-exporter?&logo=github)](LICENSE)
 
-This service exports data to Prometheus system monitoring in appropriate format from own CoreProtect Net API over gRPC
+This service exports minecraft metric data to Prometheus system monitoring in appropriate format, using collected data by CoreProtect spigot plugin.
+Required version of Golang: `>=1.15`
 
-This plugin is a part of CoreProtect Prometheus exporter. Other repositories, related to project:
-* [Spigot CoreProtect Net API](https://github.com/SadBoy228/spigot-coreprotect-net-api)
+Steps to build and install:
+```
+git clone https://github.com/k0tletka/spigot-coreprotect-prometheus-exporter
+cd ./spigot-coreprotect-prometheus-exporter
+go mod tidy
+$(go env GOPATH)/bin/mage build
+$(go env GOPATH)/bin/mage install
+```
