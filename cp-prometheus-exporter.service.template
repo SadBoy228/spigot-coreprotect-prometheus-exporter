@@ -1,0 +1,13 @@
+[Unit]
+Description=Spigot CoreProtect Prometheus exporter
+
+[Service]
+Type=simple
+WorkingDirectory=/tmp
+Environment=CONFFILE={{ .ConfigurationFileLocation }}{{ .ConfigurationFileName }}
+ExecStart={{ .InstallPrefix }}{{ .ExecutableName }}
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

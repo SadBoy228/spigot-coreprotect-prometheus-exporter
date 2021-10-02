@@ -10,5 +10,5 @@ git clone https://github.com/k0tletka/spigot-coreprotect-prometheus-exporter
 cd ./spigot-coreprotect-prometheus-exporter
 go mod tidy
 $(go env GOPATH)/bin/mage build
-$(go env GOPATH)/bin/mage install
+sudo $(go env GOPATH)/bin/mage install
 ```

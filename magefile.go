@@ -3,17 +3,45 @@
 package main
 
 import (
-    "strings"
+    "text/template"
+    "bytes"
     "os"
 
     "github.com/magefile/mage/mg"
     "github.com/magefile/mage/sh"
 )
 
+// Build script configuration
 const (
     buildPath = "build/"
     executableName = "cp-prometheus-exporter"
     installPrefix = "/usr/local/bin/"
+
+    configurationFileName = "config.toml"
+    configurationFileLocation = "/etc/cp-prometheus-exporter/"
+
+    installSystemdService = true // If you are on BSD or OSX, change this to false, or doesn't have Systemd, change this to false
+)
+
+type ServiceTemplateData struct {
+    ConfigurationFileLocation string
+    ConfigurationFileName string
+    InstallPrefix string
+    ExecutableName string
+}
+
+var (
+    serviceTmplData = ServiceTemplateData{
+        configurationFileLocation,
+        configurationFileName,
+        installPrefix,
+        executableName,
+    }
+
+    filesToInstall = map[string]string{
+        installPrefix + executableName: buildPath + executableName,
+        configurationFileLocation + configurationFileName: "config.toml.example",
+    }
 )
 
 func Build() error {
@@ -27,5 +55,36 @@ func Install() error {
         return err
     }
 
-    return sh.Copy(installPrefix + executableName, buildPath + executableName)
+    if installSystemdService {
+        mg.Deps(InstallSystemdService)
+    }
+
+    for dst, src := range filesToInstall {
+        if err := sh.Copy(dst, src); err != nil {
+            return err
+        }
+    }
+
+    return nil
+}
+
+func GenServiceTemplate() error {
+    // Execute Systemd service template
+    tmpl := template.Must(template.ParseFiles("cp-prometheus-exporter.service.template"))
+
+    buffer := &bytes.Buffer{}
+    if err := tmpl.Execute(buffer, serviceTmplData); err != nil {
+        return err
+    }
+
+    return os.WriteFile(buildPath + "cp-prometheus-exporter.service", buffer.Bytes(), 0755)
+}
+
+func Clean() error {
+    return os.RemoveAll(buildPath)
+}
+
+func InstallSystemdService() {
+    mg.Deps(GenServiceTemplate)
+    filesToInstall["/etc/systemd/system/cp-prometheus-exporter.service"] = buildPath + "cp-prometheus-exporter.service"
 }
