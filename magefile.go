@@ -6,6 +6,7 @@ import (
     "text/template"
     "bytes"
     "os"
+    "path/filepath"
 
     "github.com/magefile/mage/mg"
     "github.com/magefile/mage/sh"
@@ -60,6 +61,16 @@ func Install() error {
     }
 
     for dst, src := range filesToInstall {
+        dstPath := filepath.Dir(dst)
+
+        if _, err := os.Stat(dstPath); os.IsNotExist(err) {
+            if err = os.MkdirAll(dstPath, 0755); err != nil {
+                return err
+            }
+        } else if err != nil {
+            return err
+        }
+
         if err := sh.Copy(dst, src); err != nil {
             return err
         }
@@ -77,14 +88,19 @@ func GenServiceTemplate() error {
         return err
     }
 
-    return os.WriteFile(buildPath + "cp-prometheus-exporter.service", buffer.Bytes(), 0755)
+    return os.WriteFile(buildPath + "cp-prometheus-exporter.service", buffer.Bytes(), 0664)
 }
 
 func Clean() error {
     return os.RemoveAll(buildPath)
 }
 
-func InstallSystemdService() {
+func InstallSystemdService() error {
     mg.Deps(GenServiceTemplate)
-    filesToInstall["/etc/systemd/system/cp-prometheus-exporter.service"] = buildPath + "cp-prometheus-exporter.service"
+
+    if err := sh.Copy("/etc/systemd/system/cp-prometheus-exporter.service", buildPath + "cp-prometheus-exporter.service"); err != nil {
+        return err
+    }
+
+    return sh.RunV("systemctl", "daemon-reload")
 }
