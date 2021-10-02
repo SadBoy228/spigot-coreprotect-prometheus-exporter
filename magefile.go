@@ -3,6 +3,7 @@
 package main
 
 import (
+    "strings"
     "os"
 
     "github.com/magefile/mage/mg"
@@ -16,11 +17,7 @@ const (
 )
 
 func Build() error {
-    if err := sh.RunV("go", "build", "-o", buildPath + executableName); err != nil {
-        return err
-    }
-
-    return nil
+    return sh.RunV("go", "build", "-o", buildPath + executableName)
 }
 
 func Install() error {
@@ -30,9 +27,5 @@ func Install() error {
         return err
     }
 
-    if err := sh.Copy(installPrefix + executableName, buildPath + executableName); err != nil {
-        return err
-    }
-
-    return nil
+    return sh.Copy(installPrefix + executableName, buildPath + executableName)
 }
