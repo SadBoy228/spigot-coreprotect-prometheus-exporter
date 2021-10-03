@@ -1,1 +1,9 @@
-# There will be application config
+update_interval: 10
+
+[db]
+database_type: sqlite
+sqlite_file_path: /path/file/sqlite.db
+
+[http]
+listenport = 8080
+use_ssl = false
