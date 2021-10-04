@@ -1,9 +1,9 @@
-update_interval: 10
+update_interval = 10
 
 [db]
-database_type: sqlite
-sqlite_file_path: /path/file/sqlite.db
+database_type = "sqlite"
+sqlite_file_path = "/path/file/sqlite.db"
 
 [http]
-listenport = 8080
+listen_port = 8080
 use_ssl = false

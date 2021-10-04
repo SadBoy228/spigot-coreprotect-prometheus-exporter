@@ -1,7 +1,5 @@
 FROM golang:1.17.1-buster AS project_base
 
-ARG executable_name
-
 RUN apt update && \
     apt install -y git
 
@@ -17,7 +15,10 @@ RUN cd /cp-prometheus-exporter && \
 
 FROM debian:buster AS project_image
 
-COPY --from=project_base /cp-prometheus-exporter/build/${executable_name} /${executable_name}
-COPY --from=project_base /cp-prometheus-exporter/config.toml /config.toml
+ARG executable_name
 
-CMD [ "./${executable_name}" ]
+COPY --from=project_base /cp-prometheus-exporter/build/${executable_name} /cp-prometheus-exporter
+COPY --from=project_base /cp-prometheus-exporter/config.toml /config.toml
+WORKDIR /
+
+CMD [ "/cp-prometheus-exporter" ]
