@@ -18,5 +18,6 @@ RUN cd /cp-prometheus-exporter && \
 FROM debian:buster AS project_image
 
 COPY --from=project_base /cp-prometheus-exporter/build/${executable_name} /${executable_name}
+COPY --from=project_base /cp-prometheus-exporter/config.toml /config.toml
 
 CMD [ "./${executable_name}" ]

@@ -18,7 +18,6 @@ const (
     executableName = "cp-prometheus-exporter"
     installPrefix = "/usr/local/bin/"
 
-    configurationFileName = "config.toml"
     configurationFileLocation = "/etc/cp-prometheus-exporter/"
 
     installSystemdService = true // If you are on BSD or OSX, change this to false, or doesn't have Systemd, change this to false
@@ -26,7 +25,6 @@ const (
 
 type ServiceTemplateData struct {
     ConfigurationFileLocation string
-    ConfigurationFileName string
     InstallPrefix string
     ExecutableName string
 }
@@ -34,14 +32,13 @@ type ServiceTemplateData struct {
 var (
     serviceTmplData = ServiceTemplateData{
         configurationFileLocation,
-        configurationFileName,
         installPrefix,
         executableName,
     }
 
     filesToInstall = map[string]string{
         installPrefix + executableName: buildPath + executableName,
-        configurationFileLocation + configurationFileName: "config.toml.example",
+        configurationFileLocation + "config.toml": "config.toml",
     }
 )
 

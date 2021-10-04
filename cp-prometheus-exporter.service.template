@@ -4,7 +4,7 @@ Description=Spigot CoreProtect Prometheus exporter
 [Service]
 Type=simple
 WorkingDirectory=/tmp
-Environment=CONFFILE={{ .ConfigurationFileLocation }}{{ .ConfigurationFileName }}
+Environment=CONFFILE={{ .ConfigurationFileLocation }}config.toml
 ExecStart={{ .InstallPrefix }}{{ .ExecutableName }}
 Restart=on-failure
 RestartSec=5
