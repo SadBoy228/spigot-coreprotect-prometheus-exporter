@@ -6,6 +6,9 @@ import (
 
 type ApplicationConfig struct {
     UpdateIntervalSec       uint                `toml:"update_interval"`
+    EnableDebugLog          bool                `toml:"enable_debug_log"`
+    OutputLogFile           string              `toml:"output_log_file"`
+    ErrorLogFile            string              `toml:"error_log_file"`
     DB                      DatabaseConfig      `toml:"db"`
     HTTP                    HttpServerConfig    `toml:"http"`
 
