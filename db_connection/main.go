@@ -24,7 +24,7 @@ func InitializeConnection() *gorm.DB {
 		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	}
 	if err != nil {
-		log.Fatalf("error: ", err)
+		log.Fatalln("error: ", err)
 	}
 
 	return db
