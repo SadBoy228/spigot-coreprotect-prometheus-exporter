@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/driver/mysql"
 	"github.com/k0tletka/spigot-coreprotect-prometheus-exporter/config"
+	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
