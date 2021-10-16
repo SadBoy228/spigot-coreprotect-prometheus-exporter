@@ -8,11 +8,11 @@ import (
 )
 
 const (
-    infoPrefix  = "[INFO]: "
-    warnPrefix  = "[WARN]: "
-    errorPrefix = "[ERROR]: "
-    fatalPrefix = "[FATAL]: "
-    debugPrefix = "[DEBUG]: "
+    infoPrefix  = "[INFO]:"
+    warnPrefix  = "[WARN]:"
+    errorPrefix = "[ERROR]:"
+    fatalPrefix = "[FATAL]:"
+    debugPrefix = "[DEBUG]:"
 )
 
 type LoggerConfig struct {
@@ -52,7 +52,7 @@ func CreateLogger(cancel context.CancelFunc, name string, conf LoggerConfig) (*L
     resultLogger.stdoutLogger = log.New(
         os.Stdout,
         fmt.Sprintf("<%s> ", name),
-        log.Lmsgprefix | log.LstdFlags | log.Lshortfile,
+        log.Lmsgprefix | log.LstdFlags,
     )
 
     resultLogger.cancel = cancel
@@ -89,7 +89,10 @@ func (l *Logger) logArgs(logger *log.Logger, logPrefix string, args ...interface
     printArgs := []interface{}{logPrefix}
     printArgs = append(printArgs, args...)
 
-    logger.Println(printArgs...)
+    if logger != nil {
+        logger.Println(printArgs...)
+    }
+
     l.stdoutLogger.Println(printArgs...)
 }
 
@@ -107,6 +110,6 @@ func setupInternalFileLogger(name string, filename string) (*log.Logger, error) 
     return log.New(
         logFd,
         fmt.Sprintf("<%s> ", name),
-        log.Lmsgprefix | log.LstdFlags | log.Lshortfile,
+        log.Lmsgprefix | log.LstdFlags,
     ), nil
 }
