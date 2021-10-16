@@ -1,4 +1,4 @@
-package db_connection
+package db
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ func InitializeConnection() *gorm.DB {
             cfg.DB.MySQLPassword,
             cfg.DB.MySQLHostname,
             cfg.DB.MySQLPort,
-            cfg.DB.MySQLDatabaseName
+            cfg.DB.MySQLDatabaseName,
         )
 
 		db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
