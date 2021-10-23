@@ -11,11 +11,12 @@ import (
     "github.com/k0tletka/spigot-coreprotect-prometheus-exporter/config"
     appLog "github.com/k0tletka/spigot-coreprotect-prometheus-exporter/log"
     "github.com/k0tletka/spigot-coreprotect-prometheus-exporter/http"
+    "github.com/k0tletka/spigot-coreprotect-prometheus-exporter/db"
 )
 
 func main() {
 
-    cfg, err := config.GetConfiguration()
+    _, err := config.GetConfiguration()
 
     if err != nil {
         log.Println(err)
@@ -33,14 +34,16 @@ func main() {
         syscall.SIGKILL,
     )
 
-    mainLogger, err := appLog.CreateLogger(cancel, "Application", appLog.LoggerConfig{
-        OutputLogFile: cfg.OutputLogFile,
-        ErrorLogFile: cfg.ErrorLogFile,
-        EnableDebugLog: cfg.EnableDebugLog,
-    })
+    mainLogger, err := appLog.CreateLogger(cancel, "Application")
 
     if err != nil {
         log.Println(err)
+        return
+    }
+
+    // Initialize database
+    if _, err := db.GetDatabaseConnection(); err != nil {
+        mainLogger.Fatal("Error when initializing database: ", err)
         return
     }
 

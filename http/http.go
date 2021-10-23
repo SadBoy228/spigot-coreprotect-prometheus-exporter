@@ -19,11 +19,7 @@ func StartHTTPServer(ctx context.Context, cancel context.CancelFunc, wg *sync.Wa
     defer wg.Done()
 
     cfg, _ := config.GetConfiguration()
-    httpLogger, err := appLog.CreateLogger(cancel, "Http", appLog.LoggerConfig{
-        OutputLogFile: cfg.OutputLogFile,
-        ErrorLogFile: cfg.ErrorLogFile,
-        EnableDebugLog: cfg.EnableDebugLog,
-    })
+    httpLogger, err := appLog.CreateLogger(cancel, "Http")
 
     if err != nil {
         log.Println(err)

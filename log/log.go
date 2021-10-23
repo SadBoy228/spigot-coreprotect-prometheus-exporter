@@ -5,6 +5,10 @@ import (
     "os"
     "fmt"
     "context"
+    "io"
+    "runtime"
+
+    "github.com/k0tletka/spigot-coreprotect-prometheus-exporter/config"
 )
 
 const (
@@ -15,48 +19,53 @@ const (
     debugPrefix = "[DEBUG]:"
 )
 
-type LoggerConfig struct {
-    OutputLogFile string
-    ErrorLogFile string
-    EnableDebugLog bool
-}
-
 type Logger struct {
-    outputLogger *log.Logger
-    errorLogger *log.Logger
-    stdoutLogger *log.Logger
+    outputFile      *os.File
+    errorFile       *os.File
+    outputLogger    *log.Logger
+    errorLogger     *log.Logger
 
     cancel context.CancelFunc
-    config *LoggerConfig
+    config *config.ApplicationConfig
 }
 
-func CreateLogger(cancel context.CancelFunc, name string, conf LoggerConfig) (*Logger, error) {
+func CreateLogger(cancel context.CancelFunc, name string) (*Logger, error) {
+    cfg, _ := config.GetConfiguration()
     resultLogger := Logger{}
+    var err error
 
-    if len(conf.OutputLogFile) != 0 {
-        if outputLogger, err := setupInternalFileLogger(name, conf.OutputLogFile); err != nil {
+    if len(cfg.OutputLogFile) != 0 {
+        if resultLogger.outputFile, err = openLoggerFile(cfg.OutputLogFile); err != nil {
             return nil, err
-        } else {
-            resultLogger.outputLogger = outputLogger
         }
+
+        resultLogger.outputLogger = registerNewLogger(
+            name,
+            io.MultiWriter(os.Stdout, resultLogger.outputFile),
+        )
     }
 
-    if len(conf.ErrorLogFile) != 0 {
-        if errorLogger, err := setupInternalFileLogger(name, conf.ErrorLogFile); err != nil {
+    if len(cfg.ErrorLogFile) != 0 {
+        if resultLogger.errorFile, err = openLoggerFile(cfg.ErrorLogFile); err != nil {
             return nil, err
-        } else {
-            resultLogger.errorLogger = errorLogger
         }
+
+        resultLogger.errorLogger = registerNewLogger(
+            name,
+            io.MultiWriter(os.Stdout, resultLogger.errorFile),
+        )
     }
 
-    resultLogger.stdoutLogger = log.New(
-        os.Stdout,
-        fmt.Sprintf("<%s> ", name),
-        log.Lmsgprefix | log.LstdFlags,
-    )
+    if resultLogger.outputLogger == nil {
+        resultLogger.outputLogger = registerNewLogger(name, os.Stdout)
+    }
+
+    if resultLogger.errorLogger == nil {
+        resultLogger.errorLogger = registerNewLogger(name, os.Stdout)
+    }
 
     resultLogger.cancel = cancel
-    resultLogger.config = &conf
+    resultLogger.config = cfg
     return &resultLogger, nil
 }
 
@@ -85,19 +94,17 @@ func (l *Logger) Debug(args ...interface{}) {
     }
 }
 
-func (l *Logger) logArgs(logger *log.Logger, logPrefix string, args ...interface{}) {
+func (l *Logger) logArgs(logger *log.Logger, logPrefix string, args []interface{}) {
     printArgs := []interface{}{logPrefix}
     printArgs = append(printArgs, args...)
 
     if logger != nil {
         logger.Println(printArgs...)
     }
-
-    l.stdoutLogger.Println(printArgs...)
 }
 
-func setupInternalFileLogger(name string, filename string) (*log.Logger, error) {
-    logFd, err := os.OpenFile(
+func openLoggerFile(filename string) (*os.File, error) {
+    fd, err := os.OpenFile(
         filename,
         os.O_WRONLY | os.O_CREATE | os.O_APPEND,
         0755,
@@ -107,9 +114,19 @@ func setupInternalFileLogger(name string, filename string) (*log.Logger, error) 
         return nil, err
     }
 
+    runtime.SetFinalizer(fd, func(f interface{}) {
+        file := f.(*os.File)
+        file.Sync()
+        file.Close()
+    })
+
+    return fd, nil
+}
+
+func registerNewLogger(name string, writer io.Writer) *log.Logger {
     return log.New(
-        logFd,
+        writer,
         fmt.Sprintf("<%s> ", name),
         log.Lmsgprefix | log.LstdFlags,
-    ), nil
+    )
 }
