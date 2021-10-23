@@ -2,7 +2,7 @@ package db
 
 import (
     "github.com/k0tletka/spigot-coreprotect-prometheus-exporter/config"
-    "github.com/k0tletka/spigot-coreprotect-prometheus-exporter/db/model_types"
+    "github.com/k0tletka/spigot-coreprotect-prometheus-exporter/db/modeltypes"
 
     "github.com/google/uuid"
 )
@@ -61,7 +61,7 @@ type Session struct{
     Action  modeltypes.SessionActionType `gorm:"column:action;index:action"`
 }
 
-func (s SessionEntry) TableName() string {
+func (s Session) TableName() string {
     cfg, _ := config.GetConfiguration()
     return cfg.DB.TablePrefix + "session"
 }

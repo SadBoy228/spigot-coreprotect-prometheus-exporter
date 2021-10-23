@@ -1,6 +1,8 @@
 package modeltypes
 
 import (
+    "fmt"
+
     "database/sql/driver"
 )
 
@@ -23,5 +25,5 @@ func (s *SessionActionType) Scan(value interface{}) error {
         return nil
     }
 
-    return fmt.Errorf("can't parse %s int value", action)
+    return fmt.Errorf("can't parse %v int value", action)
 }
