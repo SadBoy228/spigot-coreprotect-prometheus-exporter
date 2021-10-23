@@ -23,5 +23,5 @@ func (u *Unixtime) Scan(value interface{}) error {
         return nil
     }
 
-    return fmt.Errorf("Can't parse %v time value: ", u)
+    return fmt.Errorf("can't parse %v time value", u)
 }

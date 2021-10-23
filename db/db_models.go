@@ -17,7 +17,7 @@ type ChatMessage struct{
     Y   int `gorm:"column:y"`
     Z   int `gorm:"column:z;index:wid"`
 
-    Message string  `gorm:"column:message;size:16000;default:NULL"`
+    Message string  `gorm:"column:message;size:16000"`
 }
 
 func (c ChatMessage) TableName() string {
@@ -46,4 +46,40 @@ type User struct{
 func (u User) TableName() string {
     cfg, _ := config.GetConfiguration()
     return cfg.DB.TablePrefix + "user"
+}
+
+type Session struct{
+    RowID       int                 `gorm:"column:rowid;primaryKey;autoIncrement"`
+    Timestamp   modeltypes.Unixtime `gorm:"column:time;index:time;index:user;index:wid;index:action"`
+    UserID      int                 `gorm:"column:user;index:user"`
+    WorldID     int                 `gorm:"column:wid;index:wid"`
+
+    X   int `gorm:"column:x;index:wid"`
+    Y   int `gorm:"column:y"`
+    Z   int `gorm:"column:z;index:wid"`
+
+    Action  modeltypes.SessionActionType `gorm:"column:action;index:action"`
+}
+
+func (s SessionEntry) TableName() string {
+    cfg, _ := config.GetConfiguration()
+    return cfg.DB.TablePrefix + "session"
+}
+
+type Command struct {
+    RowID       int                 `gorm:"column:rowid;primaryKey;autoIncrement"`
+    Timestamp   modeltypes.Unixtime `gorm:"column:time;index:time;index:user;index:wid"`
+    UserID      int                 `gorm:"column:user;index:user"`
+    WorldID     int                 `gorm:"column:wid;index:wid"`
+
+    X   int `gorm:"column:x;index:wid"`
+    Y   int `gorm:"column:y"`
+    Z   int `gorm:"column:z;index:wid"`
+
+    Message string  `gorm:"column:message;size:16000"`
+}
+
+func (c Command) TableName() string {
+    cfg, _ := config.GetConfiguration()
+    return cfg.DB.TablePrefix + "command"
 }
