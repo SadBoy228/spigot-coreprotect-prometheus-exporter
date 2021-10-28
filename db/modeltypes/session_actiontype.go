@@ -7,23 +7,23 @@ import (
 )
 
 const (
-    Logout SessionActionType = iota
-    Login
+    SessionLogout SessionActionType = iota
+    SessionLogin
 )
 
-type SessionActionType int64
+type SessionActionType int
 
 func (s SessionActionType) Value() (driver.Value, error) {
-    return int64(s), nil
+    return int(s), nil
 }
 
 func (s *SessionActionType) Scan(value interface{}) error {
-    action, ok := value.(int64)
+    action, ok := value.(int)
 
     if ok {
         *s = SessionActionType(action)
         return nil
     }
 
-    return fmt.Errorf("can't parse %v int value", action)
+    return fmt.Errorf("can't parse %v int value", value)
 }
