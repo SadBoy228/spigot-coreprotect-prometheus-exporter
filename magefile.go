@@ -12,17 +12,6 @@ import (
     "github.com/magefile/mage/sh"
 )
 
-// Build script configuration
-const (
-    buildPath = "build/"
-    executableName = "cp-prometheus-exporter"
-    installPrefix = "/usr/local/bin/"
-
-    configurationFileLocation = "/etc/cp-prometheus-exporter/"
-
-    installSystemdService = true // If you are on BSD or OSX or doesn't have Systemd, change this to false
-)
-
 type ServiceTemplateData struct {
     ConfigurationFileLocation string
     InstallPrefix string
