@@ -20,7 +20,7 @@ const (
 
     configurationFileLocation = "/etc/cp-prometheus-exporter/"
 
-    installSystemdService = true // If you are on BSD or OSX, change this to false, or doesn't have Systemd, change this to false
+    installSystemdService = true // If you are on BSD or OSX or doesn't have Systemd, change this to false
 )
 
 type ServiceTemplateData struct {
@@ -95,7 +95,7 @@ func Clean() error {
 func InstallSystemdService() error {
     mg.Deps(GenServiceTemplate)
 
-    if err := sh.Copy("/etc/systemd/system/cp-prometheus-exporter.service", buildPath + "cp-prometheus-exporter.service"); err != nil {
+    if err := sh.Copy("/usr/lib/systemd/system/cp-prometheus-exporter.service", buildPath + "cp-prometheus-exporter.service"); err != nil {
         return err
     }
 
