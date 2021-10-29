@@ -3,16 +3,17 @@ package http
 import (
     "fmt"
     "log"
-    "io"
     "context"
     "sync"
     "net/http"
     "time"
 
+    "github.com/k0tletka/spigot-coreprotect-prometheus-exporter/metrics"
     "github.com/k0tletka/spigot-coreprotect-prometheus-exporter/config"
     appLog "github.com/k0tletka/spigot-coreprotect-prometheus-exporter/log"
 
     "github.com/gorilla/mux"
+    "github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func StartHTTPServer(ctx context.Context, cancel context.CancelFunc, wg *sync.WaitGroup) {
@@ -23,6 +24,14 @@ func StartHTTPServer(ctx context.Context, cancel context.CancelFunc, wg *sync.Wa
 
     if err != nil {
         log.Println(err)
+        cancel()
+        return
+    }
+
+    metricRegisterer, err := metrics.GetMetricRegistry()
+
+    if err != nil {
+        httpLogger.Fatal("Error when registering prometheus metrics: ", err)
         return
     }
 
@@ -30,7 +39,7 @@ func StartHTTPServer(ctx context.Context, cancel context.CancelFunc, wg *sync.Wa
     defer close(serverErrorChan)
 
     router := mux.NewRouter()
-    router.HandleFunc("/", sampleHandler).PathPrefix("/")
+    router.Handle("/mertics", promhttp.HandlerFor(metricRegisterer, promhttp.HandlerOpts{}))
 
     server := &http.Server{
         Addr: fmt.Sprintf("%s:%d", cfg.HTTP.ListenAddr, cfg.HTTP.ListenPort),
@@ -62,8 +71,4 @@ func StartHTTPServer(ctx context.Context, cancel context.CancelFunc, wg *sync.Wa
     case e := <-serverErrorChan:
         httpLogger.Fatal("Error occured while serving http requests: ", e)
     }
-}
-
-func sampleHandler(w http.ResponseWriter, r *http.Request) {
-    io.WriteString(w, "Sample message")
 }
