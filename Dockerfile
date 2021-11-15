@@ -13,7 +13,7 @@ COPY . /cp-prometheus-exporter
 RUN cd /cp-prometheus-exporter && \
     mage build
 
-FROM debian:buster AS project_image
+FROM alpine:3.14 AS project_image
 
 ARG executable_name
 

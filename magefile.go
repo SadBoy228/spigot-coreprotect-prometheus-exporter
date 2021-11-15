@@ -29,10 +29,14 @@ var (
         installPrefix + executableName: buildPath + executableName,
         configurationFileLocation + "config.toml": "config.toml",
     }
+
+    buildEnv = map[string]string{
+        "CGO_ENABLED": "0",
+    }
 )
 
 func Build() error {
-    return sh.RunV("go", "build", "-o", buildPath + executableName)
+    return sh.RunWithV(buildEnv, "go", "build", "-o", buildPath + executableName)
 }
 
 func Install() error {
