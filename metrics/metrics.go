@@ -11,7 +11,23 @@ var (
 func GetMetricRegistry() (*prometheus.Registry, error) {
     if packageRegistry == nil {
         newRegistry := prometheus.NewPedanticRegistry()
-        collectorsList := []prometheus.Collector{}
+
+        collectorsList := []prometheus.Collector{
+            ServerPlayerWheneverConnected,
+            ServerPlayerCurrentOnline,
+            PlaytimeAmount,
+            PlaytimeAverage,
+            ChatAmount,
+            ChatAverage,
+            CommandUsageAmount,
+            CommandUsageAverage,
+            WorldBlockPermutationClaimed,
+            WorldBlockPermutationBroke,
+            WorldItemPermutationClaimed,
+            WorldItemPermutationStorageDeposited,
+            WorldItemPermutationStorageWithdrew,
+            PlayerDeathAmount,
+        }
 
         for _, collector := range collectorsList {
             if err := newRegistry.Register(collector); err != nil {
