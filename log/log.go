@@ -29,8 +29,7 @@ type Logger struct {
     config *config.ApplicationConfig
 }
 
-func CreateLogger(cancel context.CancelFunc, name string) (*Logger, error) {
-    cfg, _ := config.GetConfiguration()
+func CreateLogger(cancel context.CancelFunc, cfg *config.ApplicationConfig, name string) (*Logger, error) {
     resultLogger := Logger{}
     var err error
 

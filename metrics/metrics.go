@@ -8,7 +8,7 @@ var (
     packageRegistry *prometheus.Registry
 )
 
-func GetMetricRegistry() (*prometheus.Registry, error) {
+func GetMetricRegistry() *prometheus.Registry {
     if packageRegistry == nil {
         newRegistry := prometheus.NewPedanticRegistry()
 
@@ -31,12 +31,12 @@ func GetMetricRegistry() (*prometheus.Registry, error) {
 
         for _, collector := range collectorsList {
             if err := newRegistry.Register(collector); err != nil {
-                return nil, err
+                panic(err)
             }
         }
 
         packageRegistry = newRegistry
     }
 
-    return packageRegistry, nil
+    return packageRegistry
 }

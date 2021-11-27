@@ -21,8 +21,7 @@ type ChatMessage struct{
 }
 
 func (c ChatMessage) TableName() string {
-    cfg, _ := config.GetConfiguration()
-    return cfg.DB.TablePrefix + "chat"
+    return config.GetConfiguration().DB.TablePrefix + "chat"
 }
 
 type World struct{
@@ -32,8 +31,7 @@ type World struct{
 }
 
 func (w World) TableName() string {
-    cfg, _ := config.GetConfiguration()
-    return cfg.DB.TablePrefix + "world"
+    return config.GetConfiguration().DB.TablePrefix + "world"
 }
 
 type User struct{
@@ -44,8 +42,7 @@ type User struct{
 }
 
 func (u User) TableName() string {
-    cfg, _ := config.GetConfiguration()
-    return cfg.DB.TablePrefix + "user"
+    return config.GetConfiguration().DB.TablePrefix + "user"
 }
 
 type Session struct{
@@ -62,8 +59,7 @@ type Session struct{
 }
 
 func (s Session) TableName() string {
-    cfg, _ := config.GetConfiguration()
-    return cfg.DB.TablePrefix + "session"
+    return config.GetConfiguration().DB.TablePrefix + "session"
 }
 
 type Command struct {
@@ -80,8 +76,7 @@ type Command struct {
 }
 
 func (c Command) TableName() string {
-    cfg, _ := config.GetConfiguration()
-    return cfg.DB.TablePrefix + "command"
+    return config.GetConfiguration().DB.TablePrefix + "command"
 }
 
 type Block struct {
@@ -104,8 +99,7 @@ type Block struct {
 }
 
 func (b Block) TableName() string {
-    cfg, _ := config.GetConfiguration()
-    return cfg.DB.TablePrefix + "block"
+    return config.GetConfiguration().DB.TablePrefix + "block"
 }
 
 type BlockMetadataMap struct {
@@ -115,6 +109,5 @@ type BlockMetadataMap struct {
 }
 
 func (b BlockMetadataMap) TableName() string {
-    cfg, _ := config.GetConfiguration()
-    return cfg.DB.TablePrefix + "blockdata_map"
+    return config.GetConfiguration().DB.TablePrefix + "blockdata_map"
 }
