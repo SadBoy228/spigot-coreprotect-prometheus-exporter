@@ -1,4 +1,4 @@
-# Spigot CoreProtect Prometheus Exporter
+# Spigot CoreProtect Prometheus Exporter (in development state)
 [![License](https://img.shields.io/github/license/k0tletka/spigot-coreprotect-prometheus-exporter?&logo=github)](LICENSE)
 
 This service exports minecraft metric data to Prometheus system monitoring in appropriate format, using collected data by CoreProtect spigot plugin.
